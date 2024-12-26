@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"sknoslo/ebc2024/runner"
 )
 
+var _ = fmt.Print // TODO: delete when done
 
 func main() {
 	runner.Run("part1.notes", partone)
