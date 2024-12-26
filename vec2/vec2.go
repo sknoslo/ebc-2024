@@ -10,10 +10,15 @@ type Vec2 struct {
 }
 
 var North = Vec2{0, -1}
+var NorthEast = Vec2{1, -1}
 var East = Vec2{1, 0}
+var SouthEast = Vec2{1, 1}
 var South = Vec2{0, 1}
+var SouthWest = Vec2{-1, 1}
 var West = Vec2{-1, 0}
+var NorthWest = Vec2{-1, -1}
 var CardinalDirs = []Vec2{North, East, South, West}
+var AllDirs = []Vec2{North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest}
 
 func New(x int, y int) Vec2 {
 	return Vec2{x, y}

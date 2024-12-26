@@ -5,6 +5,7 @@ import (
 	"iter"
 	"sknoslo/ebc2024/strutils"
 	"sknoslo/ebc2024/vec2"
+	"slices"
 	"strings"
 )
 
@@ -44,6 +45,10 @@ func FromSize[T comparable](size vec2.Vec2, def T) *Grid[T] {
 		cells[i] = def
 	}
 	return New(w, h, cells)
+}
+
+func Clone[T comparable](grid *Grid[T]) *Grid[T] {
+	return New(grid.w, grid.h, slices.Clone(grid.cells))
 }
 
 func New[T comparable](w, h int, cells []T) *Grid[T] {
