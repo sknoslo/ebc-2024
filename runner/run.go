@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"sknoslo/ebc2024/input"
+	"time"
 )
 
 var part = 1
@@ -12,7 +13,10 @@ func Run(notepath string, fn func(notes string) any) {
 	if err != nil {
 		fmt.Printf("Part %d: no notes, skipped\n", part)
 	} else {
-		fmt.Printf("Part %d: %v\n", part, fn(notes))
+		s := time.Now()
+		res := fn(notes)
+		e := time.Now().Sub(s)
+		fmt.Printf("Part %d: %v (%v)\n", part, res, e)
 	}
 	part++
 }

@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"sknoslo/ebc2024/grids"
 	"sknoslo/ebc2024/runner"
 	"sknoslo/ebc2024/vec2"
 )
-
-var _ = fmt.Print // TODO: delete when done
 
 func main() {
 	runner.Run("part1.notes", partone)
@@ -40,8 +37,6 @@ func partone(notes string) any {
 			blocks++
 		}
 		grid = nextgrid
-
-		fmt.Println(grid.Stringf("%c"))
 	}
 	return blocks
 }
@@ -71,8 +66,6 @@ func parttwo(notes string) any {
 			blocks++
 		}
 		grid = nextgrid
-
-		fmt.Println(grid.Stringf("%c"))
 	}
 	return blocks
 }
@@ -102,8 +95,6 @@ func partthree(notes string) any {
 			blocks++
 		}
 		grid = nextgrid
-
-		fmt.Println(grid.Stringf("%c"))
 	}
 	return blocks
 }
