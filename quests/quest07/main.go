@@ -150,10 +150,12 @@ S+= +=-== +=++=     =+=+=--=    =-= ++=     +=-  =+=++=-+==+ =++=-=-=--
 		panic("Failed to cut on ':' for string '" + notes + "'")
 	}
 
+	const laps = 2024
+
 	var simulate func(actions []string) int
 	simulate = func(actions []string) int {
 		essence, power := 0, 0
-		for i := range 2024 * len(track) {
+		for i := range laps * len(track) {
 			action := actions[i%len(actions)]
 			segment := track[i%len(track)]
 			switch {
@@ -172,12 +174,22 @@ S+= +=-== +=++=     =+=+=--=    =-= ++=     +=-  =+=++=-+==+ =++=-=-=--
 		return essence
 	}
 
-	scoreToBeat := simulate(strings.Split(actionstr, ","))
+	opponentActions := strings.Split(actionstr, ",")
+	scoreToBeat := simulate(opponentActions)
+
+	c := make(chan int)
+	perms := 0
+	for actions := range combo.UniquePermutations(strings.Split("---===+++++", "")) {
+		perms++
+		go func() {
+			c <- simulate(actions)
+		}()
+	}
 
 	better := 0
-
-	for actions := range combo.UniquePermutations(strings.Split("---===+++++", "")) {
-		if simulate(actions) > scoreToBeat {
+	for range perms {
+		score := <- c
+		if score > scoreToBeat {
 			better++
 		}
 	}
