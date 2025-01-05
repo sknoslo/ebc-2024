@@ -74,6 +74,11 @@ func (grid *Grid[T]) SetCellAt(v vec2.Vec2, t T) {
 	grid.cells[i] = t
 }
 
+func (grid *Grid[T]) SetCellAtXY(x, y int, t T) {
+	i := y*grid.w + x
+	grid.cells[i] = t
+}
+
 func (grid *Grid[T]) InGrid(v vec2.Vec2) bool {
 	return v.InRange(0, 0, grid.w-1, grid.h-1)
 }
@@ -128,6 +133,19 @@ func (grid *Grid[T]) Stringf(f string) string {
 		if s.X == grid.w-1 {
 			fmt.Fprintln(&b)
 		}
+	}
+
+	return b.String()
+}
+
+func (grid *Grid[T]) StringRangef(f string, s, e vec2.Vec2) string {
+	var b strings.Builder
+
+	for y := s.Y; y < e.Y; y++ {
+		for x := s.X; x < e.X; x++ {
+			fmt.Fprintf(&b, f, grid.CellAtXY(x, y))
+		}
+		fmt.Fprintln(&b)
 	}
 
 	return b.String()
