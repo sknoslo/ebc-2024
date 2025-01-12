@@ -1,16 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"sknoslo/ebc2024/grids"
 	"sknoslo/ebc2024/math"
 	"sknoslo/ebc2024/pqueues"
 	"sknoslo/ebc2024/runner"
-	"sknoslo/ebc2024/sets"
 	"sknoslo/ebc2024/vec2"
 )
-
-var _ = fmt.Print // TODO: delete when done
 
 func main() {
 	runner.Run("part1.notes", partone)
@@ -39,19 +35,18 @@ func partone(notes string) any {
 	s := grid.Find('S')
 	q := pqueues.New[Step](64)
 	q.Push(Step{s, 0}, 0)
-	seen := sets.New[vec2.Vec2](64)
 
 	for !q.Empty() {
 		step := q.Pop()
-		if seen.Has(step.plat) {
-			continue
-		}
-		seen.Insert(step.plat)
 
 		o := grid.CellAt(step.plat)
 		if o == 'E' {
 			return step.time
 		}
+		if o == '#' {
+			continue
+		}
+		grid.SetCellAt(step.plat, '#')
 
 		ol := level(o)
 
@@ -73,19 +68,18 @@ func parttwo(notes string) any {
 	s := grid.Find('S')
 	q := pqueues.New[Step](64)
 	q.Push(Step{s, 0}, 0)
-	seen := sets.New[vec2.Vec2](64)
 
 	for !q.Empty() {
 		step := q.Pop()
-		if seen.Has(step.plat) {
-			continue
-		}
-		seen.Insert(step.plat)
 
 		o := grid.CellAt(step.plat)
 		if o == 'E' {
 			return step.time
 		}
+		if o == '#' {
+			continue
+		}
+		grid.SetCellAt(step.plat, '#')
 
 		ol := level(o)
 
@@ -108,19 +102,18 @@ func partthree(notes string) any {
 	for s, _ := range grid.FindCells('S') {
 		q.Push(Step{s, 0}, 0)
 	}
-	seen := sets.New[vec2.Vec2](64)
 
 	for !q.Empty() {
 		step := q.Pop()
-		if seen.Has(step.plat) {
-			continue
-		}
-		seen.Insert(step.plat)
 
 		o := grid.CellAt(step.plat)
 		if o == 'E' {
 			return step.time
 		}
+		if o == '#' {
+			continue
+		}
+		grid.SetCellAt(step.plat, '#')
 
 		ol := level(o)
 
