@@ -92,6 +92,20 @@ func (grid *Grid[T]) Find(item T) vec2.Vec2 {
 	return vec2.New(0, 0)
 }
 
+func (grid *Grid[T]) FindCells(item T) iter.Seq2[vec2.Vec2, T] {
+	return func(yield func(vec2.Vec2, T) bool) {
+		for i, v := range grid.cells {
+			if v != item {
+				continue
+			}
+
+			if !yield(grid.indexToVec2(i), v) {
+				return
+			}
+		}
+	}
+}
+
 func (grid *Grid[T]) Cells() iter.Seq2[vec2.Vec2, T] {
 	return func(yield func(vec2.Vec2, T) bool) {
 		for i, v := range grid.cells {
