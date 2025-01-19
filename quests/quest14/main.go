@@ -8,6 +8,7 @@ import (
 	"sknoslo/ebc2024/strutils"
 	"sknoslo/ebc2024/vec3"
 	"strings"
+	"sync"
 )
 
 func main() {
@@ -127,6 +128,7 @@ type Step struct {
 	dist int
 }
 
+// TODO: optimization - search for all leaves at once (or, even better, reverse from leaves to trunk segments)
 func dist(tree *Vec3Set, start, end, bmin, bmax vec3.Vec3) int {
 	seen := fromBounds(bmin, bmax)
 	var q = deques.New[Step](128)
@@ -200,19 +202,38 @@ func partthree(notes string) any {
 		leaves.Insert(pos)
 	}
 
-	lowestMurkiness := 1 << 32
 	stree := fromSet(tree, bmin, bmax)
 	// With my input, you could speed this up with a binary search looking for a local minimum... but I can't prove
-	// why that should be true (gaps it the trunk should make that not guaranteed?) so I'm not doing it.
+	// why that should be true (gaps in the trunk should make that not guaranteed?) so I'm not doing it.
+	c := make(chan int, trunkHeight)
+	var wg sync.WaitGroup
 	for y := 1; y <= trunkHeight; y++ {
 		candidate := vec3.New(0, y, 0)
-
-		murkiness := 0
-		for leaf := range leaves.Items() {
-			murkiness += dist(stree, candidate, leaf, bmin, bmax)
+		if !stree.Has(candidate) {
+			continue
 		}
 
-		lowestMurkiness = min(lowestMurkiness, murkiness)
+		wg.Add(1)
+
+		go func() {
+			murkiness := 0
+			for leaf := range leaves.Items() {
+				murkiness += dist(stree, candidate, leaf, bmin, bmax)
+			}
+			c <- murkiness
+			wg.Done()
+		}()
+
+	}
+
+	go func() {
+		wg.Wait()
+		close(c)
+	}()
+
+	lowestMurkiness := 1 << 32
+	for m := range c {
+		lowestMurkiness = min(lowestMurkiness, m)
 	}
 
 	return lowestMurkiness
