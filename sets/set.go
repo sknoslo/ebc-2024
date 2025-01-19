@@ -1,5 +1,10 @@
 package sets
 
+import (
+	"iter"
+	"maps"
+)
+
 type empty struct{}
 
 var E = empty{}
@@ -26,4 +31,12 @@ func (s *Set[T]) Has(item T) bool {
 
 func (s *Set[T]) Remove(item T) {
 	delete(s.items, item)
+}
+
+func (s *Set[T]) Count() int {
+	return len(s.items)
+}
+
+func (s *Set[T]) Items() iter.Seq[T] {
+	return maps.Keys(s.items)
 }

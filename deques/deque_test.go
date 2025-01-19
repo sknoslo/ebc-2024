@@ -47,7 +47,29 @@ func TestQueueBackFront(t *testing.T) {
 	}
 }
 
-func TestResize(t *testing.T) {
+func TestResizeBackFront(t *testing.T) {
+	q := New[int](4)
+
+	for i := range 8 {
+		q.PushBack(i)
+	}
+
+	fmt.Println(q.data)
+	fmt.Println(q.start, q.end)
+
+	for i := range 8 {
+		actual := q.PopFront()
+
+		fmt.Println(q.data)
+		fmt.Println(q.start, q.end)
+
+		if actual != i {
+			t.Fatalf(`Expected "%v" but got "%v"`, i, actual)
+		}
+	}
+}
+
+func TestResizeFrontBack(t *testing.T) {
 	q := New[int](4)
 
 	for i := range 8 {
@@ -56,8 +78,6 @@ func TestResize(t *testing.T) {
 		fmt.Println(q.data)
 		fmt.Println(q.start, q.end)
 	}
-
-	fmt.Println("POPPING")
 
 	for i := range 8 {
 		actual := q.PopBack()

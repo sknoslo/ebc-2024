@@ -47,24 +47,25 @@ func (d *Deque[T]) PushBack(val T) {
 }
 
 func (d *Deque[T]) PopFront() T {
-	var empty T
-	res := d.data[d.start]
-	d.data[d.start] = empty
-	d.start++
-	if d.start == len(d.data) {
-		d.start = 0
+	if d.Empty() {
+		panic("Cannot PopFront an empty Deque")
 	}
+
+	res := d.data[d.start]
+	d.start = (d.start + 1) % len(d.data)
 	return res
 }
 
 func (d *Deque[T]) PopBack() T {
-	var empty T
+	if d.Empty() {
+		panic("Cannot PopBack an empty Deque")
+	}
+
 	d.end--
 	if d.end < 0 {
 		d.end = len(d.data) - 1
 	}
 	res := d.data[d.end]
-	d.data[d.end] = empty
 	return res
 }
 
@@ -74,11 +75,11 @@ func (d *Deque[T]) Empty() bool {
 
 func (d *Deque[T]) grow() {
 	size := len(d.data)
-	if d.start == d.end+1 || d.start == 0 && d.end == size {
+	if (d.end+1)%size == d.start {
 		data := make([]T, size*2)
 
 		s := d.start
-		d.start = size/2 + 1 // start at a quarter
+		d.start = size/4 // start at a quarter
 		e := d.start
 		for s != d.end {
 			data[e] = d.data[s]
