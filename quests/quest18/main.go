@@ -1,14 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"sknoslo/ebc2024/deques"
 	"sknoslo/ebc2024/grids"
 	"sknoslo/ebc2024/runner"
 	"sknoslo/ebc2024/vec2"
 )
-
-var _ = fmt.Print // TODO: delete when done
 
 func main() {
 	runner.Run("part1.notes", partone)
@@ -89,22 +86,16 @@ func parttwo(notes string) any {
 
 func partthree(notes string) any {
 	original := grids.FromRunes(notes)
+	size := original.Size()
 
-	answer := 1 << 32
+	timegrids := make([]*grids.Grid[int], 0, 64)
 
-	// TODO: a faster way...
-	// from each tree flood fill, maintaining a grid of distances to each empty segment
-	// then iterate over the grid and sum the times from each segment and find a min
-	for start, startcell := range original.Cells() {
+	for start := range original.FindCells('P') {
 		grid := grids.FromRunes(notes)
-		if startcell != '.' {
-			continue
-		}
+		times := grids.FromSize(size, 0)
 
 		q := deques.New[step](16)
 		q.PushFront(step{start, 0})
-
-		sumOfTimes := 0
 
 		for !q.Empty() {
 			s := q.PopBack()
@@ -113,20 +104,29 @@ func partthree(notes string) any {
 			if cell == '~' || cell == '#' {
 				continue
 			}
-			if cell == 'P' {
-				sumOfTimes += s.time
+			if cell == '.' {
+				times.SetCellAt(s.pos, s.time)
 			}
 			grid.SetCellAt(s.pos, '~')
 
 			for _, dir := range vec2.CardinalDirs {
 				npos := s.pos.Add(dir)
 
-				if grid.InGrid(npos) {
+				if grid.InGrid(npos) && times.CellAt(npos) == 0 {
 					q.PushFront(step{npos, s.time + 1})
 				}
 			}
 		}
 
+		timegrids = append(timegrids, times)
+	}
+
+	answer := 1 << 32
+	for pos := range original.FindCells('.') {
+		sumOfTimes := 0
+		for _, times := range timegrids {
+			sumOfTimes += times.CellAt(pos)
+		}
 		answer = min(sumOfTimes, answer)
 	}
 
