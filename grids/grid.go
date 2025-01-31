@@ -197,6 +197,24 @@ func (grid *Grid[T]) StringOverlayMapf(f string, overlay T, m map[vec2.Vec2]int)
 	return b.String()
 }
 
+func (grid *Grid[T]) StringFilterf(f string, include func (T) bool, fallback T) string {
+	var b strings.Builder
+
+	for s, v := range grid.Cells() {
+		if include(v) {
+			fmt.Fprintf(&b, f, v)
+		} else {
+			fmt.Fprintf(&b, f, fallback)
+		}
+
+		if s.X == grid.w-1 {
+			fmt.Fprintln(&b)
+		}
+	}
+
+	return b.String()
+}
+
 func (grid *Grid[T]) indexToVec2(i int) vec2.Vec2 {
 	return vec2.New(i%grid.w, i/grid.w)
 }
